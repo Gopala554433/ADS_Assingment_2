@@ -31,8 +31,6 @@ def countries_years(file_name):
 
     # read the csv file
     read_data = pd.read_csv(file_name)
-
-
     country_columns = read_data.set_index("Country Name").transpose()
 
     # get the columns data from index 3
@@ -44,7 +42,47 @@ def countries_years(file_name):
 
     return country_columns, years_columns
 
-
 country_as_columns, years__as_columns = countries_years(
     file_name="World_bank_data.csv"
 )
+
+"""defining the function to plot the graphs of the selected countires with 
+   respect to particular years to plot the bar graphs with the indicator to 
+   do the data analysis
+"""
+
+def plotting_data(indicator_name):
+    """This function takes indicator name as argument, It plots the bar graph for the dataframe and
+    returns the filtered dataframe for the indicator with given countries and years"""
+
+    if indicator_name == "Population growth (annual %)":
+        label = "Annual %"
+    elif indicator_name == "Electricity production from hydroelectric sources (% of total)":
+        label = "% of total"
+    elif indicator_name == "Electricity production from oil sources (% of total)":
+        label = "% of total"
+
+    # filter the dataframe with given countries and indicator name and set the index as Country Name.
+    selected_data = main_dataframe[
+        (main_dataframe["Country Name"].isin(countries))
+        & (main_dataframe["Indicator Name"] == indicator_name)
+    ].set_index("Country Name")
+
+    # filter the dataframe with given years and reset the index
+    refined_df = selected_data.loc[:, years].reset_index()
+    # plt.legend(bbox_to_anchor=(1.0, 1.0))
+    refined_df.set_index("Country Name").plot.bar(
+        rot=0, xlabel="Countries", ylabel=label, title=indicator_name
+    )
+
+    return refined_df
+
+"""calling the plotting_data function to plot the bar graph with respect the
+  indicator so that the graph produce require data analyis with respect to
+  countries and years mentioned to represent plotting
+"""
+
+
+plotting_data("Population growth (annual %)")
+plotting_data("Electricity production from hydroelectric sources (% of total)")
+plotting_data("Electricity production from oil sources (% of total)")
