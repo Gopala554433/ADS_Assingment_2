@@ -86,3 +86,63 @@ def plotting_data(indicator_name):
 plotting_data("Population growth (annual %)")
 plotting_data("Electricity production from hydroelectric sources (% of total)")
 plotting_data("Electricity production from oil sources (% of total)")
+
+
+#defining mean function
+def mean_stats():
+    """This function plots the graph for Electricity production from oil
+    source with hydroelectric dependency with the help ofpandas statistical
+    function mean()"""
+
+    # mean of the population growth
+    mean_series = collected_data.mean(numeric_only=True)
+    mean_data = pd.DataFrame({"Years": years, "electricity eficiency": mean_series})
+    mean_data.set_index("Years").plot(
+        rot=0, title="Electricity production from oil source with hydroelectric dependency",color="red"
+    )
+
+
+
+
+#calling the mean_stats function
+mean_stats()
+
+
+"""Defining the function to plot the heatmap with the help of seaborn to create 
+   correlation between the indicator and also show the graphical reprentation
+   of the correlation between the indicator to get the over all overview
+"""
+
+def plot_corr(country_name):
+    """This function takes the Country Name as argument and cross compare
+    the correlations between different indicators of the Country and plot the heatmap"""
+
+    # filter the dataframe with given country name
+    country_data = main_dataframe[main_dataframe["Country Name"] == country_name]
+    
+    # list of indicators for the country
+    indicator_names = [
+        "Agriculture, forestry, and fishing, value added (% of GDP)",
+        "Population, total",
+        "Electricity production from hydroelectric sources (% of total)",
+        "Population growth (annual %)",
+        "Agricultural land (sq. km)",
+        "Electricity production from oil sources (% of total)",
+    ]
+
+    # set the index as Indicator Name and filter the dataframe with given indicator names and years
+    country_data_indicator = country_data.set_index("Indicator Name")
+
+    # extract the data for the given years and indicator names and transpose the dataframe
+    extracted_data_t = country_data_indicator.loc[indicator_names, years].transpose()
+    
+
+    # plot the heatmap for the correlation between different indicators
+    plt.title(country_name, fontsize=20)
+    sns.heatmap(extracted_data_t.corr(), linecolor='white',
+                linewidths=0.1, annot=True, cmap="Accent")
+    return extracted_data_t
+
+#calling the function to plot heatmap
+plot_corr('France')
+plot_corr("Canada")
